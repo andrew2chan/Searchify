@@ -2,8 +2,10 @@ import './App.css';
 import { useEffect } from 'react';
 import ls from 'localstorage-slim';
 import { updateInitialState } from './Slices/spotifyUserSlice';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { client_id, client_secret } from './env/env.js';
+
+import NavBar from './Component/Navbar/NavBar.js';
 
 function App() {
   const dispatch = useDispatch();
@@ -24,8 +26,7 @@ function App() {
     .then((res) => {
 
       //this is your access token for making requests
-      //console.log(res);
-      ls.set('accessToken', res.access_token, { ttl: 3600 });
+      ls.set('accessToken', res.access_token, { ttl: 3600 }); //sets it to expire out of local storage after 1h
       console.log("FROM SPOTIFY API: " + ls.get('accessToken'));
     })
     .catch((err) => {
@@ -33,19 +34,20 @@ function App() {
     })
   }
   
-
+  // Every render, it sets the access token to make sure we have a working access token
   useEffect(() => {
     if(!ls.get('accessToken')) { //if we can't find an access token then we make a request for it
       spotifyAccessToken();
     }
 
-    dispatch(updateInitialState(ls.get('accessToken')));
+    dispatch(updateInitialState(ls.get('accessToken'))); // updates the redux with the access token
+
     console.log("FROM LOCALSTORAGE: " + ls.get('accessToken'));
   })
 
   return (
     <div className="App">
-      
+      <NavBar />
     </div>
   );
 }
