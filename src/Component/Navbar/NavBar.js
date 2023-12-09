@@ -1,4 +1,3 @@
-import './NavBar.css'
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -30,9 +29,11 @@ const NavBar = () => {
 
     return (
         <>
-            <div className="nav-bar-input-block">
-                <input type="text" name="artist_name" onChange={setArtistName} id="artist_name" className="nav-bar-input" />
-                <input type="button" name="submit_artist_name" onClick={setArtistSubmit} id="submit_artist_name" value="Search!" className="nav-bar-input" />
+            <div className="w-screen">
+                <div className="grid grid-cols-3 py-2 px-3">
+                    <input type="text" name="artist_name" onChange={setArtistName} id="artist_name" className="col-span-2 rounded-l-full p-1 pl-4 text-black text-xl tracking-wide outline-none" />
+                    <input type="button" name="submit_artist_name" onClick={setArtistSubmit} id="submit_artist_name" value="Search!" className="col-span-1 bg-lime-500 text-black rounded-r-full p-1 text-xl font-bold hover:bg-lime-600 transition ease-in-out duration-300" />
+                </div>
             </div>
         </>
     )

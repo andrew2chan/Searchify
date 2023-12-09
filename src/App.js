@@ -46,8 +46,9 @@ function App() {
   })
 
   return (
-    <div className="App">
+    <div className="bg-neutral-900 h-screen grid auto-rows-min text-white font-body">
       <NavBar />
+      <div>TEst</div>
     </div>
   );
 }
