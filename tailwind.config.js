@@ -5,6 +5,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      gridAutoRows: {
+        '1minfill': 'min-content 1fr'
+      },
       fontFamily: {
         body: ['Hedvig Letters San']
       }

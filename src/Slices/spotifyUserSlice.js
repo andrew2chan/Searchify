@@ -7,7 +7,7 @@ export const spotifyUserSlice = createSlice({
     },
     reducers: {
         updateInitialState: (state, action) => {
-            state.accessToken = action.payload;
+            state.accessToken = action.payload
         }
     }
 })

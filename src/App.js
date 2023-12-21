@@ -5,7 +5,8 @@ import { updateInitialState } from './Slices/spotifyUserSlice';
 import { useDispatch } from 'react-redux';
 import { client_id, client_secret } from './env/env.js';
 
-import NavBar from './Component/Navbar/NavBar.js';
+import NavBar from './Component/NavBar.js';
+import Main from './Component/Main.js';
 
 function App() {
   const dispatch = useDispatch();
@@ -27,6 +28,7 @@ function App() {
 
       //this is your access token for making requests
       ls.set('accessToken', res.access_token, { ttl: 3600 }); //sets it to expire out of local storage after 1h
+      dispatch(updateInitialState(ls.get('accessToken'))); // updates the redux with the access token
       console.log("FROM SPOTIFY API: " + ls.get('accessToken'));
     })
     .catch((err) => {
@@ -46,9 +48,9 @@ function App() {
   })
 
   return (
-    <div className="bg-neutral-900 h-screen grid auto-rows-min text-white font-body">
+    <div className="bg-neutral-900 h-screen grid auto-rows-1minfill text-white font-body">
       <NavBar />
-      <div>TEst</div>
+      <Main />
     </div>
   );
 }
