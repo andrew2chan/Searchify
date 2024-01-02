@@ -1,11 +1,63 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { updateSearchedInfo } from '../Slices/spotifySearchSlice';
+import { updateSearchedInfo, updateRelatedArtistsInfo } from '../Slices/spotifySearchSlice';
+import { fetchArtistByName, fetchRelatedArtistById } from './helperFunctions';
+import { RelatedArtistsNode } from '../Models/RelatedArtists';
 
 const NavBar = () => {
     const [artistName, updateArtistName] = useState("");
+    const [artistTree, updateArtistTree] = useState();
+    const c = useRef(1); //used as a global var to set base case to exit from BFS search
     const accessToken = useSelector((state) => state.spotifyUserSlice.accessToken);
     const dispatch = useDispatch();
+    const MAX_ARTISTS_ON_SCREEN = 50; // sets the max number of artists that can be on screen at one time
+    const MAX_RELATED_ARTISTS = 5; // sets the max number of related artists that we will be showing per artist
+
+    c.current = 1;
+
+    // get related artists
+    const getRelatedArtists = (response) => {
+        const idFromResponse = response.artists.items[0].id;
+
+        let artistRoot = new RelatedArtistsNode(idFromResponse, null, response.artists.items[0], 1);
+
+        fetchRelatedArtistById(idFromResponse, accessToken)
+        .then((response2) => {
+            for(let i = 0; i < Math.min(MAX_RELATED_ARTISTS, response2.artists.length); i++) {
+                artistRoot.relatedArtists.push(new RelatedArtistsNode(response2.artists[i].id, idFromResponse, response2.artists[i], 2))
+                c.current++;
+            }
+        })
+        .then(() => {
+            createArtistsTree(artistRoot);
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+        console.log(artistRoot);
+    }
+
+    const createArtistsTree = (root) => { // BFS down the tree in order to create new related artists
+        if(c.current > MAX_ARTISTS_ON_SCREEN) return;
+
+        for(let i = 0; i < root.relatedArtists.length; i++) { //go through all the intial related artists
+            let relatedArtistID = root.relatedArtists[i].id;
+
+            fetchRelatedArtistById(relatedArtistID, accessToken)
+            .then((response) => {
+                for(let k = 0; k < Math.min(MAX_RELATED_ARTISTS, response.artists.length); k++) { //get related artists for each related artist
+                    root.relatedArtists[i].relatedArtists.push(new RelatedArtistsNode(response.artists[k].id, root.relatedArtists[i].id, response.artists[k], root.relatedArtists[i].level + 1))
+                    c.current++;
+                }
+            })
+            .then(() => {
+                createArtistsTree(root.relatedArtists[i]);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+        }
+    }
 
     // sets the artist name pulled from the user input
     const setArtistName = (e) => {
@@ -14,36 +66,14 @@ const NavBar = () => {
 
     // submits the artist name to the spotify api and returns info based on that
     const setArtistSubmit = (e) => {
-        fetch(`https://api.spotify.com/v1/search?q=${artistName}&type=artist&limit=1&offset=0`, {
-            'method': 'GET',
-            'headers': {
-                'Authorization': `Bearer ${accessToken}`
-            }
-        })
-        .then((blob) => blob.json())
+        fetchArtistByName(artistName, accessToken)
         .then((response) => {
             console.log(response);
-            if(!response.hasOwnProperty("error") ) dispatch(updateSearchedInfo(response));
-            getRelatedArtists(response);
-        })
-        .catch((err) => {
-            console.log(err);
-        });
-    }
-
-    // get related artists
-    const getRelatedArtists = (response) => {
-        const idFromResponse = response.artists.items[0].id;
-
-        fetch(`https://api.spotify.com/v1/artists/${idFromResponse}/related-artists`, {
-            'method': 'GET',
-            'headers': {
-                'Authorization': `Bearer ${accessToken}`
+            if(!response.hasOwnProperty("error") ) { // only update the store if we don't run into an error while getting the artist, usually due to token being expired
+                dispatch(updateSearchedInfo(response));
             }
-        })
-        .then((blob) => blob.json())
-        .then((response) => {
-            console.log(response);
+
+            getRelatedArtists(response); //gets a list of related artists so that we can propagate downward
         })
         .catch((err) => {
             console.log(err);

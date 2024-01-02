@@ -4,18 +4,18 @@ export const spotifySearchSlice = createSlice({
     name: "spotifySearchSlice",
     initialState: {
         "returnedInfo": {},
-        "relatedArtistsInfo": {}
+        "relatedArtistsInfo": []
     },
     reducers: {
         updateSearchedInfo: (state, action) => {
             state.returnedInfo = action.payload;
         },
         updateRelatedArtistsInfo: (state, action) => {
-            state.relatedArtistsInfo = action.payload;
+            state.relatedArtistsInfo = [...state.relatedArtistsInfo, ...action.payload];
         }
     }
 })
 
-export const { updateSearchedInfo } = spotifySearchSlice.actions;
+export const { updateSearchedInfo, updateRelatedArtistsInfo } = spotifySearchSlice.actions;
 
 export default spotifySearchSlice.reducer;
