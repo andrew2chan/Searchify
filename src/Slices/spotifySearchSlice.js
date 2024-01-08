@@ -3,15 +3,11 @@ import {createSlice} from '@reduxjs/toolkit';
 export const spotifySearchSlice = createSlice({
     name: "spotifySearchSlice",
     initialState: {
-        "returnedInfo": {},
-        "relatedArtistsInfo": []
+        "returnedInfo": {}
     },
     reducers: {
         updateSearchedInfo: (state, action) => {
             state.returnedInfo = action.payload;
-        },
-        updateRelatedArtistsInfo: (state, action) => {
-            state.relatedArtistsInfo = [...state.relatedArtistsInfo, ...action.payload];
         }
     }
 })

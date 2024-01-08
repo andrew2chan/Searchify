@@ -1,5 +1,5 @@
 import './App.css';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import ls from 'localstorage-slim';
 import { updateInitialState } from './Slices/spotifyUserSlice';
 import { useDispatch } from 'react-redux';
@@ -10,6 +10,7 @@ import Main from './Component/Main.js';
 
 function App() {
   const dispatch = useDispatch();
+  const [relatedArtistInfo, updateRelatedArtistsInfo] = useState();
 
   const spotifyAccessToken = () => {
 
@@ -49,8 +50,8 @@ function App() {
 
   return (
     <div className="bg-neutral-900 h-screen grid auto-rows-1minfill text-white font-body">
-      <NavBar />
-      <Main />
+      <NavBar updateRelatedArtistsInfo={updateRelatedArtistsInfo} />
+      <Main relatedArtistInfo={relatedArtistInfo} />
     </div>
   );
 }

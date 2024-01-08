@@ -2,10 +2,12 @@ import * as d3 from "d3";
 import { useSelector } from 'react-redux';
 import {useState, useEffect, useRef} from 'react'
 
-const Main = () => {
+const Main = (props) => {
     const artistInfoRedux = useSelector((state) => state.spotifySearchSlice.returnedInfo);
     const [artistInfo, updateArtistInfo] = useState();
     const svgElement = useRef();
+    const [listArtists, updateListArtists] = useState([]);
+    const [listOfRelated, updateListOfRelated] = useState();
 
     useEffect(() => {
         if(svgElement.current) {
@@ -25,6 +27,13 @@ const Main = () => {
         d3.selectAll("g")
             .attr("transform", e.transform); //attr transform takes 
     }
+
+    useEffect(() => {
+        if(props.relatedArtistInfo) {
+            console.log(props.relatedArtistInfo)
+        }
+
+    },[props.relatedArtistInfo]);
 
     return (
         <>
