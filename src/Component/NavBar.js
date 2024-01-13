@@ -31,10 +31,14 @@ const NavBar = (props) => {
 
                 await fetchRelatedArtistById(currNode.id, accessToken)
                 .then((response) => {
+                    let tmpC = 0; // Makes sure that we start below the max related artists
                     response.artists.map((item, index) => {
-                        if(index >= MAX_RELATED_ARTISTS) return null; //break out if more than MAX_RELATED_ARTISTS
+                        if(tmpC >= MAX_RELATED_ARTISTS) return null; //break out if more than MAX_RELATED_ARTISTS
+                        if(nodes.some((e) => e.id === item.id) || q.some((e) => e.id === item.id)) return null; // checks the saved lists to make sure that we don't have duplicate artists
 
-                        q.push(new RelatedArtistsNode(item.id, currNode.id, item, tmpLevel));
+                        tmpC++;
+
+                        q.push(new RelatedArtistsNode(item.id, currNode.id, item, tmpLevel, null));
 
                         return null;
                     });
@@ -64,10 +68,15 @@ const NavBar = (props) => {
                 dispatch(updateSearchedInfo(response));
             }
 
-            let newNode = new RelatedArtistsNode(response.artists.items[0].id, null, response.artists.items[0], 1);
+            let newNode = new RelatedArtistsNode(response.artists.items[0].id, null, response.artists.items[0], 1, null);
 
             //Gets the related artists
             let relatedArtistTree = await getRelatedArtists(newNode); //gets a list of related artists so that we can propagate downward
+
+            for(let i = 0; i < relatedArtistTree.length; i++) { //assign the current index to each of the related artist to be used for linking later in d3
+                relatedArtistTree[i].currentIndex = i;
+            }
+
             props.updateRelatedArtistsInfo(relatedArtistTree); //pass this back up to the parent component
 
         })
