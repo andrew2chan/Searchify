@@ -1,28 +1,12 @@
 import * as d3 from "d3";
-import { useSelector } from 'react-redux';
+import GraphImages from "./GraphImages";
 import {useState, useEffect, useRef} from 'react'
 
 const Main = (props) => {
-    const artistInfoRedux = useSelector((state) => state.spotifySearchSlice.returnedInfo);
-    const [artistInfo, updateArtistInfo] = useState();
     const [linksList, updateLinksList] = useState();
     const svgElement = useRef();
     const { relatedArtistInfo: arrRelatedArtists } = props;
-    const circleRadius = 5;
-
-    useEffect(() => {
-        if(svgElement.current) {
-            //d3.select(svgElement.current).call(d3.zoom().on("zoom", () => {}));
-            let zoom = d3.zoom()
-                .on('zoom', handleZoom)
-
-            d3.select(svgElement.current).call(zoom);
-        }
-    }, [artistInfo]);
-
-    useEffect(() => {
-        updateArtistInfo(artistInfoRedux); // pulls the artist info from the redux store to use locally
-    }, [artistInfoRedux])
+    const circleRadius = 20;
 
     const handleZoom = (e) => {
         d3.selectAll("g")
@@ -64,6 +48,8 @@ const Main = (props) => {
 
     useEffect(() => {
         if(linksList && arrRelatedArtists) {
+            let hoveredID;
+
             const ticked = () => {
                 updateLinks();
                 updateNodes();
@@ -81,7 +67,21 @@ const Main = (props) => {
                         return d.y;
                     })
                     .attr("r", circleRadius)
-                    .style("fill", "url(\"#images\"");
+                    .style("fill", (d, i) => { //goes through each item in arrRelatedArtists and assigns it the image based on it's currentIndex
+                        return "url(#images" + d.currentIndex + ")";
+                    })
+                    .classed("stroke-lime-600", (e) => {
+                        return e.id === hoveredID; //if element we are iterating over has same ID as hovered element then give it the class of lime 600
+                    })
+                    .on('mouseover', (e, d) => {
+                        hoveredID = d.id; //sets the id once we hover over
+                        updateNodes();
+                    })
+                    .on('mouseout', () => {
+                        hoveredID = undefined; //unsets the id
+                        updateNodes();
+                    })
+
             }
         
             const updateLinks = () => {
@@ -109,29 +109,45 @@ const Main = (props) => {
             let heightSVG = parseInt(SVGSelector.style('height'));
 
             d3.forceSimulation(arrRelatedArtists)
-            .force('charge', d3.forceManyBody().strength(-100)) //repel from each other by 100
+            .force('charge', d3.forceManyBody().strength(-500)) //repel from each other by 100
             .force('center', d3.forceCenter(widthSVG / 2, heightSVG / 2)) // center all circles in the middle
             .force('collision', d3.forceCollide().radius(function(d) { // make sure there are no colliding circles
                 return d.radius;
             }))
             .force('link', d3.forceLink().links(linksList)) // show the links
-            .on('tick', ticked)
+            .on('tick', ticked);
+
+            //handles zoom
+            if(svgElement.current) {
+                let zoom = d3.zoom()
+                    .on('zoom', handleZoom)
+    
+                d3.select(svgElement.current).call(zoom);
+            }
+
         }
     }, [linksList, arrRelatedArtists])
 
     return (
         <>
-            {artistInfo !== undefined && JSON.stringify(artistInfo) !== '{}' && // if we actually have an artist that we found then we create a circle with the artist's img
-                <svg className="border border-lime-600 w-full h-full" id="main-svg" ref={svgElement}>
-                    <defs id="circle-images">
-                        <pattern id="images" x="0" y="0" width="1" height="1">
-                            <image x="0" y="0" width={`${circleRadius * 2}`} height={`${circleRadius * 2}`} xlinkHref={artistInfo.artists.items[0].images[0].url} />
-                        </pattern>
-                    </defs>
+            {(arrRelatedArtists && linksList) ?  // if we actually have an artist that we found then we create a circle with the artist's img
+                (
+                    <svg className="border border-lime-600 w-full h-full" id="main-svg" ref={svgElement}>
+                        <defs id="circle-images">
+                            {
+                                arrRelatedArtists.map((e, i) => {
+                                    return <GraphImages element={e} circleRadius={circleRadius} key={i} />
+                                })
+                            }
+                        </defs>
 
-                    <g className="links"></g>
-                    <g className="nodes"></g>
-                </svg>
+                        <g className="links"></g>
+                        <g className="nodes"></g>
+                    </svg>
+                ) :
+                (
+                    <p>LOADING...</p>
+                )
             }
         </>
     );
