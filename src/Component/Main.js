@@ -81,6 +81,10 @@ const Main = (props) => {
                         hoveredID = undefined; //unsets the id
                         updateNodes();
                     })
+                    .on('click', (e, d) => {
+                        console.log(e);
+                        console.log(d);
+                    })
 
             }
         
@@ -132,18 +136,49 @@ const Main = (props) => {
         <>
             {(arrRelatedArtists && linksList) ?  // if we actually have an artist that we found then we create a circle with the artist's img
                 (
-                    <svg className="border border-lime-600 w-full h-full" id="main-svg" ref={svgElement}>
-                        <defs id="circle-images">
-                            {
-                                arrRelatedArtists.map((e, i) => {
-                                    return <GraphImages element={e} circleRadius={circleRadius} key={i} />
-                                })
-                            }
-                        </defs>
+                    <div className="w-full h-full relative">
+                        <svg className="border border-lime-600 h-full w-full" id="main-svg" ref={svgElement}>
+                            <defs id="circle-images">
+                                {
+                                    arrRelatedArtists.map((e, i) => {
+                                        return <GraphImages element={e} circleRadius={circleRadius} key={i} />
+                                    })
+                                }
+                            </defs>
 
-                        <g className="links"></g>
-                        <g className="nodes"></g>
-                    </svg>
+                            <g className="links"></g>
+                            <g className="nodes"></g>
+                        </svg>
+
+                        <div className="absolute z-10 top-0 right-0 w-96 h-full bg-black border border-lime-600" id="information-box"> { /* This is the box for the pop up box */ }
+                            <div className="w-full h-full flex flex-col justify-between">
+                                <div className="w-full h-full py-8 px-4 flex flex-col overflow-y-scroll [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                                    <header className="font-bold text-5xl">
+                                        Title Header
+                                    </header>
+                                    <figure className="w-full ">
+                                        <img src="https://i.scdn.co/image/ab6761610000e5ebb0d44bc6f830e443d7501a8c" className="w-full border border-lime-600" alt="logo of singer or band" />
+                                        <figcaption className="text-md italic">
+                                            Pop, Dance
+                                        </figcaption>
+                                    </figure>
+                                    <aside className="w-full my-6">
+                                        <div className="w-full text-3xl my-3">
+                                            Top 3 tracks
+                                        </div>
+                                        <ul className="ml-5 list-disc text-xl">
+                                            <li>Song 1</li>
+                                            <li>Song 2</li>
+                                            <li>Song 3</li>
+                                        </ul>
+                                    </aside>
+                                </div>
+                                <div className="py-4 px-1 border-t border-lime-600">
+                                    This is the player
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 ) :
                 (
                     <p>LOADING...</p>

@@ -49,7 +49,7 @@ function App() {
   })
 
   return (
-    <div className="bg-neutral-900 h-screen grid auto-rows-1minfill text-white font-body">
+    <div className="bg-neutral-900 h-screen w-screen grid auto-rows-1minfill text-white font-body">
       <NavBar updateRelatedArtistsInfo={updateRelatedArtistsInfo} />
       <Main relatedArtistInfo={relatedArtistInfo} />
     </div>

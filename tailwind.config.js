@@ -10,6 +10,10 @@ module.exports = {
       },
       fontFamily: {
         body: ['Hedvig Letters San']
+      },
+      flex: {
+        '2': '2',
+        '3': '3'
       }
     },
   },
