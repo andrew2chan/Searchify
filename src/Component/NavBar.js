@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateSearchedInfo } from '../Slices/spotifySearchSlice';
-import { fetchArtistByName, fetchRelatedArtistById } from './helperFunctions';
+import { fetchArtistByName, fetchRelatedArtistById, fetchTopTracksById } from './helperFunctions';
 import { RelatedArtistsNode } from '../Models/RelatedArtists';
 
 const NavBar = (props) => {
@@ -54,6 +54,17 @@ const NavBar = (props) => {
         return nodes;
     }
 
+    const getTopTracks = (currNode) => {
+        fetchTopTracksById(currNode.id, accessToken)
+        .then((response) => {
+            let topTracks = response.tracks.map((item) => item.name);
+            currNode.topTracks = topTracks.slice(0, Math.min(3, topTracks.length));
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+    }
+
     // sets the artist name pulled from the user input
     const setArtistName = (e) => {
         updateArtistName(e.target.value);
@@ -61,7 +72,7 @@ const NavBar = (props) => {
 
     // submits the artist name to the spotify api and returns info based on that
     const setArtistSubmit = async (e) => {
-        await fetchArtistByName(artistName, accessToken)
+        fetchArtistByName(artistName, accessToken)
         .then(async (response) => {
             //console.log(response);
             if(!response.hasOwnProperty("error") ) { // only update the store if we don't run into an error while getting the artist, usually due to token being expired
@@ -75,6 +86,7 @@ const NavBar = (props) => {
 
             for(let i = 0; i < relatedArtistTree.length; i++) { //assign the current index to each of the related artist to be used for linking later in d3
                 relatedArtistTree[i].currentIndex = i;
+                relatedArtistTree[i].topTracks = await getTopTracks(relatedArtistTree[i]);
             }
 
             props.updateRelatedArtistsInfo(relatedArtistTree); //pass this back up to the parent component

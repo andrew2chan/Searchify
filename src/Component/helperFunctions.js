@@ -30,4 +30,20 @@ const fetchRelatedArtistById = async (artistId, accessToken) => {
         .then((blob) => blob.json())
 }
 
-export { fetchArtistByName, fetchRelatedArtistById }
+/*
+@param artistId The ID of the artist
+@param accessToken is the access token that you get from spotify
+
+Takes and artist's id and access token and returns the top tracks for that artist
+*/
+const fetchTopTracksById = async (artistId, accessToken) => {
+    return await fetch(`https://api.spotify.com/v1/artists/${artistId}/top-tracks?market=CA`, {
+            'method': 'GET',
+            'headers': {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        })
+        .then((blob) => blob.json())
+}
+
+export { fetchArtistByName, fetchRelatedArtistById, fetchTopTracksById }

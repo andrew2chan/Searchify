@@ -4,6 +4,7 @@ function RelatedArtistsNode(id, parentId, data, level, currentIndex) {
     this.level = level;
     this.currentIndex = currentIndex;
     this.data = data;
+    this.topTracks = [];
 }
 
 export { RelatedArtistsNode }

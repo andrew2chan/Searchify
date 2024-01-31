@@ -4,9 +4,14 @@ import {useState, useEffect, useRef} from 'react'
 
 const Main = (props) => {
     const [linksList, updateLinksList] = useState();
+    const [selectedNode, updateSelectedNode] = useState();
     const svgElement = useRef();
     const { relatedArtistInfo: arrRelatedArtists } = props;
     const circleRadius = 20;
+
+    const capitalizeFirstLetter = (word) => {
+        return word.charAt(0).toUpperCase() + word.slice(1);
+    }
 
     const handleZoom = (e) => {
         d3.selectAll("g")
@@ -82,8 +87,8 @@ const Main = (props) => {
                         updateNodes();
                     })
                     .on('click', (e, d) => {
-                        console.log(e);
-                        console.log(d);
+                        //console.log(d);
+                        updateSelectedNode(d);
                     })
 
             }
@@ -113,7 +118,7 @@ const Main = (props) => {
             let heightSVG = parseInt(SVGSelector.style('height'));
 
             d3.forceSimulation(arrRelatedArtists)
-            .force('charge', d3.forceManyBody().strength(-500)) //repel from each other by 100
+            .force('charge', d3.forceManyBody().strength(-1000)) //repel from each other by 100
             .force('center', d3.forceCenter(widthSVG / 2, heightSVG / 2)) // center all circles in the middle
             .force('collision', d3.forceCollide().radius(function(d) { // make sure there are no colliding circles
                 return d.radius;
@@ -154,12 +159,12 @@ const Main = (props) => {
                             <div className="w-full h-full flex flex-col justify-between">
                                 <div className="w-full h-full py-8 px-4 flex flex-col overflow-y-scroll [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                                     <header className="font-bold text-5xl">
-                                        Title Header
+                                        {selectedNode && selectedNode.data ? selectedNode.data.name : "Title"}
                                     </header>
                                     <figure className="w-full ">
-                                        <img src="https://i.scdn.co/image/ab6761610000e5ebb0d44bc6f830e443d7501a8c" className="w-full border border-lime-600" alt="logo of singer or band" />
+                                        <img src={selectedNode && selectedNode.data ? selectedNode.data.images[0].url : "data:image/svg+xml;charset=utf8,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%3E%3C/svg%3E"} className="w-full border border-lime-600" alt="logo of singer or band" />
                                         <figcaption className="text-md italic">
-                                            Pop, Dance
+                                            {selectedNode && selectedNode.data ? selectedNode.data.genres.map((item) => capitalizeFirstLetter(item)).join(", ") : "" }
                                         </figcaption>
                                     </figure>
                                     <aside className="w-full my-6">
@@ -167,9 +172,13 @@ const Main = (props) => {
                                             Top 3 tracks
                                         </div>
                                         <ul className="ml-5 list-disc text-xl">
-                                            <li>Song 1</li>
-                                            <li>Song 2</li>
-                                            <li>Song 3</li>
+                                            {
+                                                selectedNode && selectedNode.topTracks.map((item, index) => {
+                                                    return (
+                                                        <li key={index}>{item}</li>
+                                                    )
+                                                })
+                                            }
                                         </ul>
                                     </aside>
                                 </div>
