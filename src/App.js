@@ -27,6 +27,8 @@ function App() {
     })
     .then((res) => {
 
+      console.log(res);
+
       //this is your access token for making requests
       ls.set('accessToken', res.access_token, { ttl: 3600 }); //sets it to expire out of local storage after 1h
       dispatch(updateInitialState(ls.get('accessToken'))); // updates the redux with the access token

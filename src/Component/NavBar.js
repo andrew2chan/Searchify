@@ -57,7 +57,11 @@ const NavBar = (props) => {
     const getTopTracks = (currNode) => {
         fetchTopTracksById(currNode.id, accessToken)
         .then((response) => {
-            let topTracks = response.tracks.map((item) => item.name);
+            let topTracks = response.tracks.map((item) => 
+            {
+                return  {"song_name": item.name, "uri": item.uri }
+            });
+
             currNode.topTracks = topTracks.slice(0, Math.min(3, topTracks.length));
         })
         .catch((err) => {

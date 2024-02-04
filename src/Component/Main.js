@@ -1,10 +1,12 @@
 import * as d3 from "d3";
+import { useSelector } from "react-redux";
 import GraphImages from "./GraphImages";
 import {useState, useEffect, useRef} from 'react'
 
 const Main = (props) => {
     const [linksList, updateLinksList] = useState();
     const [selectedNode, updateSelectedNode] = useState();
+    const accessToken = useSelector((state) => state.spotifyUserSlice.accessToken);
     const svgElement = useRef();
     const { relatedArtistInfo: arrRelatedArtists } = props;
     const circleRadius = 20;
@@ -16,6 +18,11 @@ const Main = (props) => {
     const handleZoom = (e) => {
         d3.selectAll("g")
             .attr("transform", e.transform); //attr transform takes 
+    }
+
+    const handleClickOnSongName = (e) => {
+        let uriClicked = d3.select(e.target)
+            .attr("data_uri"); //gets the uri that is saved in the data_uri attr
     }
 
     useEffect(() => {
@@ -87,7 +94,6 @@ const Main = (props) => {
                         updateNodes();
                     })
                     .on('click', (e, d) => {
-                        //console.log(d);
                         updateSelectedNode(d);
                     })
 
@@ -175,7 +181,7 @@ const Main = (props) => {
                                             {
                                                 selectedNode && selectedNode.topTracks.map((item, index) => {
                                                     return (
-                                                        <li key={index}>{item}</li>
+                                                        <li key={index} data_uri={item.uri} onClick={handleClickOnSongName}>{item.song_name}</li>
                                                     )
                                                 })
                                             }
