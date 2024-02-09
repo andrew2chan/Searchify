@@ -1,5 +1,7 @@
 import './App.css';
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import ls from 'localstorage-slim';
 import { updateInitialState } from './Slices/spotifyUserSlice';
 import { useDispatch } from 'react-redux';
@@ -7,12 +9,15 @@ import { client_id, client_secret } from './env/env.js';
 
 import NavBar from './Component/NavBar.js';
 import Main from './Component/Main.js';
+import LandingPage from './Component/LandingPage.js';
+import AuthorizationPage from './Component/AuthorizationPage.js';
 
 function App() {
   const dispatch = useDispatch();
+  const spotifyCode = useSelector((state) => state.spotifyUserSlice.code)
   const [relatedArtistInfo, updateRelatedArtistsInfo] = useState();
 
-  const spotifyAccessToken = () => {
+  /*const spotifyAccessToken = () => {
 
     // fetch the access token from spotify
     fetch('https://accounts.spotify.com/api/token', {
@@ -48,12 +53,45 @@ function App() {
     dispatch(updateInitialState(ls.get('accessToken'))); // updates the redux with the access token
 
     console.log("FROM LOCALSTORAGE: " + ls.get('accessToken'));
-  })
+  })*/
+
+  const MainPage = () => {
+    return (
+      <>
+        <NavBar updateRelatedArtistsInfo={updateRelatedArtistsInfo} />
+        <Main relatedArtistInfo={relatedArtistInfo} />
+      </>
+    )
+  }
+
+  const router = createBrowserRouter([
+    {
+      element: <LandingPage />,
+      path: '/',
+      loader: async () => {
+        let data = { test: "me" }
+        return new Response(JSON.stringify(data), {
+            status: 200,
+            headers: {
+              'Content-Type': 'application/json; utf-8',
+            },
+          }
+        );
+      }
+    },
+    {
+      element: <AuthorizationPage />,
+      path: '/authorize'
+    },
+    {
+      element: <MainPage />,
+      path: '/main'
+    }
+  ]);
 
   return (
     <div className="bg-neutral-900 h-screen w-screen grid auto-rows-1minfill text-white font-body">
-      <NavBar updateRelatedArtistsInfo={updateRelatedArtistsInfo} />
-      <Main relatedArtistInfo={relatedArtistInfo} />
+      <RouterProvider router={router} />
     </div>
   );
 }

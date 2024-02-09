@@ -9,7 +9,8 @@ module.exports = {
         '1minfill': 'min-content 1fr'
       },
       fontFamily: {
-        body: ['Hedvig Letters San']
+        body: ['Hedvig Letters San'],
+        rounded: ['Protest Riot', 'sans-serif']
       },
       flex: {
         '2': '2',
