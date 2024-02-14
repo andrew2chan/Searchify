@@ -46,4 +46,39 @@ const fetchTopTracksById = async (artistId, accessToken) => {
         .then((blob) => blob.json())
 }
 
-export { fetchArtistByName, fetchRelatedArtistById, fetchTopTracksById }
+/*
+@param accessToken is the access token that you get from spotify
+
+Takes an access token and returns the devices available
+*/
+const fetchDevicesAvailable = async (accessToken) => {
+    return await fetch('https://api.spotify.com/v1/me/player/devices', {
+            "method": "GET",
+            'headers': {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        })
+        .then((blob) => blob.json())
+}
+
+/*
+@param uri of the track id
+@param accessToken is the access token that you get from spotify
+@param deviceId is the device we want to play to, default to first device
+
+Plays the track with a given uri
+*/
+const fetchPlayTrack = async (uri, accessToken, deviceId) => {
+    return await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
+            "method": "PUT",
+            "headers": {
+                'Authorization': `Bearer ${accessToken}`,
+                "Content-Type": "application/json"
+            },
+            "body": JSON.stringify({
+                "uris": [`${uri}`]
+            })
+        })
+}
+
+export { fetchArtistByName, fetchRelatedArtistById, fetchTopTracksById, fetchDevicesAvailable, fetchPlayTrack }

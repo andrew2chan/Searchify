@@ -3,18 +3,19 @@ import { createSlice } from '@reduxjs/toolkit';
 export const spotifyUserSlice = createSlice({
     name: "spotifyUserSlice",
     initialState: {
-        "accessToken": null
+        "accessToken": null,
+        "refreshToken": null
     },
     reducers: {
-        updateInitialState: (state, action) => {
+        updateAccessToken: (state, action) => {
             state.accessToken = action.payload;
         },
-        updateCode: (state, action) => {
+        updateRefreshToken: (state, action) => {
             state.code = action.payload;
         }
     }
 })
 
-export const { updateInitialState } = spotifyUserSlice.actions;
+export const { updateAccessToken, updateRefreshToken } = spotifyUserSlice.actions;
 
 export default spotifyUserSlice.reducer;

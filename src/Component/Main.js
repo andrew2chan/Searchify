@@ -1,7 +1,8 @@
 import * as d3 from "d3";
 import { useSelector } from "react-redux";
 import GraphImages from "./GraphImages";
-import {useState, useEffect, useRef} from 'react'
+import {useState, useEffect, useRef} from 'react';
+import { fetchDevicesAvailable, fetchPlayTrack } from "./helperFunctions";
 
 const Main = (props) => {
     const [linksList, updateLinksList] = useState();
@@ -23,6 +24,25 @@ const Main = (props) => {
     const handleClickOnSongName = (e) => {
         let uriClicked = d3.select(e.target)
             .attr("data_uri"); //gets the uri that is saved in the data_uri attr
+
+        fetchDevicesAvailable(accessToken)
+        .then((response) => {
+            if(response.devices.length > 0) { //a devices is found
+                let { id, name } = response.devices[0];
+                return { id, name }
+            }
+            else { // no device found so throw an error
+                throw new Error("No devices available");
+            }
+        })
+        .then((response) => {
+            let { id, name } = response;
+
+            fetchPlayTrack(uriClicked, accessToken, id);
+        })
+        .catch((err) => {
+            console.log(err);
+        })
     }
 
     useEffect(() => {
@@ -188,8 +208,11 @@ const Main = (props) => {
                                         </ul>
                                     </aside>
                                 </div>
-                                <div className="py-4 px-1 border-t border-lime-600">
-                                    This is the player
+                                <div className="py-4 px-1 border-t border-lime-600 flex align-middle">
+                                    <span className="material-symbols-outlined">pause_circle</span>
+                                    <span className="w-full truncate flex items-center">
+                                        <span className="animate-marquee">THIS IS FOR TESSSSSSSSSSSSSSSSSSTINGGGGGGGGGGGG</span>
+                                    </span>
                                 </div>
                             </div>
                         </div>

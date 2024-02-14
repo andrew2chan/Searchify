@@ -15,6 +15,15 @@ module.exports = {
       flex: {
         '2': '2',
         '3': '3'
+      },
+      keyframes: {
+        marquee: {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': {transform: 'translateX(100%)' }
+        }
+      },
+      animation: {
+        marquee: 'marquee 20s ease-out infinite'
       }
     },
   },

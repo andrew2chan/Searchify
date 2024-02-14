@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import ls from 'localstorage-slim';
 import { client_id } from '../env/env.js';
-import { updateInitialState } from "../Slices/spotifyUserSlice";
+import { updateAccessToken, updateRefreshToken } from "../Slices/spotifyUserSlice";
 
 const AuthorizationPage = () => {
     const dispatch = useDispatch();
@@ -49,14 +49,16 @@ const AuthorizationPage = () => {
         .then((response) => {
             console.log(response);
             ls.set('access_token', response.access_token);
-            dispatch(updateInitialState(ls.get("access_token")));
+            ls.set('refresh_token', response.refresh_token);
+            dispatch(updateAccessToken(ls.get("access_token")));
+            dispatch(updateRefreshToken(ls.get("refresh_token")));
             navigate('/main');
         })
         .catch((err) => {
             console.log(err);
         })
         
-    },[])
+    },[dispatch, navigate])
 
     return <h1>WORKING...</h1>
 }

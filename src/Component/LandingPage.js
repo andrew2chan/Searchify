@@ -1,8 +1,6 @@
-import { useEffect } from 'react';
-import { useLoaderData } from "react-router-dom";
 import ls from 'localstorage-slim';
 
-import { client_id, client_secret } from '../env/env.js';
+import { client_id } from '../env/env.js';
 
 const LandingPage = () => {
     // code from spotify, generates a random string
@@ -35,7 +33,7 @@ const LandingPage = () => {
         const clientId = client_id;
         const redirectUri = 'http://localhost:3000/authorize'; //where we direct back to after authorization
 
-        const scope = 'user-read-playback-state user-modify-playback-state'; //sets the scope of all the things we are authorized to use
+        const scope = 'user-read-playback-state user-modify-playback-state user-read-currently-playing'; //sets the scope of all the things we are authorized to use
         const authUrl = new URL("https://accounts.spotify.com/authorize");
 
         ls.set('code_verifier', codeVerifier); //sets the code into local storage
