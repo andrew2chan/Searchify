@@ -47,7 +47,7 @@ const AuthorizationPage = () => {
             resolve(response);
         })
         .then((response) => {
-            console.log(response);
+            //console.log(response);
             ls.set('access_token', response.access_token);
             ls.set('refresh_token', response.refresh_token);
             dispatch(updateAccessToken(ls.get("access_token")));

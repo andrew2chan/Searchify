@@ -2,11 +2,12 @@ import * as d3 from "d3";
 import { useSelector } from "react-redux";
 import GraphImages from "./GraphImages";
 import {useState, useEffect, useRef} from 'react';
-import { fetchDevicesAvailable, fetchPlayTrack } from "./helperFunctions";
+import { fetchDevicesAvailable, fetchPlayTrack, fetchCurrentlyPlayingTrack } from "./helperFunctions";
 
 const Main = (props) => {
     const [linksList, updateLinksList] = useState();
     const [selectedNode, updateSelectedNode] = useState();
+    const [currentTrack, updateCurrentTrack] = useState("");
     const accessToken = useSelector((state) => state.spotifyUserSlice.accessToken);
     const svgElement = useRef();
     const { relatedArtistInfo: arrRelatedArtists } = props;
@@ -28,15 +29,15 @@ const Main = (props) => {
         fetchDevicesAvailable(accessToken)
         .then((response) => {
             if(response.devices.length > 0) { //a devices is found
-                let { id, name } = response.devices[0];
-                return { id, name }
+                let { id } = response.devices[0];
+                return { id }
             }
             else { // no device found so throw an error
                 throw new Error("No devices available");
             }
         })
         .then((response) => {
-            let { id, name } = response;
+            let { id } = response;
 
             fetchPlayTrack(uriClicked, accessToken, id);
         })
@@ -44,6 +45,22 @@ const Main = (props) => {
             console.log(err);
         })
     }
+
+    useEffect(() => { //pulls currently playing song every 2 seconds or when a song is changed
+        const getCurrentlyPlayingSong = () => {
+            fetchCurrentlyPlayingTrack(accessToken)
+            .then((response) => {
+                //console.log(response);
+                let trackName = response && response.item ? response.item.name : "";
+                let artistName = response &&response.item && response.item.artists ? response.item.artists[0].name : "";
+                updateCurrentTrack(trackName + " - " + artistName);
+            })
+        }
+        //getCurrentlyPlayingSong(accessToken);
+        setInterval(() => {
+            getCurrentlyPlayingSong(accessToken);
+        }, 2000)
+    },[accessToken])
 
     useEffect(() => {
         if(arrRelatedArtists) {
@@ -201,7 +218,7 @@ const Main = (props) => {
                                             {
                                                 selectedNode && selectedNode.topTracks.map((item, index) => {
                                                     return (
-                                                        <li key={index} data_uri={item.uri} onClick={handleClickOnSongName}>{item.song_name}</li>
+                                                        <li key={index} data_uri={item.uri} onClick={handleClickOnSongName} className="cursor-pointer hover:text-lime-600 transition duration-200">{item.song_name}</li>
                                                     )
                                                 })
                                             }
@@ -210,8 +227,8 @@ const Main = (props) => {
                                 </div>
                                 <div className="py-4 px-1 border-t border-lime-600 flex align-middle">
                                     <span className="material-symbols-outlined">pause_circle</span>
-                                    <span className="w-full truncate flex items-center">
-                                        <span className="animate-marquee">THIS IS FOR TESSSSSSSSSSSSSSSSSSTINGGGGGGGGGGGG</span>
+                                    <span className="truncate flex items-center w-full">
+                                        <span className="animate-marquee w-full">{currentTrack === "" ? "No song playing" : currentTrack}</span>
                                     </span>
                                 </div>
                             </div>

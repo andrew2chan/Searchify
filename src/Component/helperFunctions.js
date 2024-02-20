@@ -81,4 +81,19 @@ const fetchPlayTrack = async (uri, accessToken, deviceId) => {
         })
 }
 
-export { fetchArtistByName, fetchRelatedArtistById, fetchTopTracksById, fetchDevicesAvailable, fetchPlayTrack }
+/*
+@param accessToken is the access token that you get from spotify
+
+Gets currently playing song
+*/
+const fetchCurrentlyPlayingTrack = async (accessToken) => {
+    return await fetch(`https://api.spotify.com/v1/me/player/currently-playing`, {
+            "method": "GET",
+            "headers": {
+                'Authorization': `Bearer ${accessToken}`,
+            }
+        })
+        .then((blob) => blob.json())
+}
+
+export { fetchArtistByName, fetchRelatedArtistById, fetchTopTracksById, fetchDevicesAvailable, fetchPlayTrack, fetchCurrentlyPlayingTrack }

@@ -23,7 +23,7 @@ module.exports = {
         }
       },
       animation: {
-        marquee: 'marquee 20s ease-out infinite'
+        marquee: 'marquee 20s linear infinite'
       }
     },
   },
