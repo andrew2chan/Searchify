@@ -68,16 +68,14 @@ const fetchDevicesAvailable = async (accessToken) => {
 
 Plays the track with a given uri
 */
-const fetchPlayTrack = async (uri, accessToken, deviceId) => {
+const fetchPlayTrack = async (body, accessToken, deviceId) => {
     return await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
             "method": "PUT",
             "headers": {
                 'Authorization': `Bearer ${accessToken}`,
                 "Content-Type": "application/json"
             },
-            "body": JSON.stringify({
-                "uris": [`${uri}`]
-            })
+            body
         })
 }
 
@@ -96,4 +94,18 @@ const fetchCurrentlyPlayingTrack = async (accessToken) => {
         .then((blob) => blob.json())
 }
 
-export { fetchArtistByName, fetchRelatedArtistById, fetchTopTracksById, fetchDevicesAvailable, fetchPlayTrack, fetchCurrentlyPlayingTrack }
+/*
+@param accessToken is the access token that you get from spotify
+
+Plays the track with a given uri
+*/
+const fetchPauseTrack = async (accessToken, deviceId) => {
+    return await fetch(`https://api.spotify.com/v1/me/player/pause?device_id=${deviceId}`, {
+            "method": "PUT",
+            "headers": {
+                'Authorization': `Bearer ${accessToken}`,
+            }
+        })
+}
+
+export { fetchArtistByName, fetchRelatedArtistById, fetchTopTracksById, fetchDevicesAvailable, fetchPlayTrack, fetchCurrentlyPlayingTrack, fetchPauseTrack }

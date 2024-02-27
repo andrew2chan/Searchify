@@ -76,6 +76,7 @@ const NavBar = (props) => {
 
     // submits the artist name to the spotify api and returns info based on that
     const setArtistSubmit = async (e) => {
+        e.preventDefault();
         fetchArtistByName(artistName, accessToken)
         .then(async (response) => {
             //console.log(response);
@@ -105,12 +106,14 @@ const NavBar = (props) => {
         <>
             <div className="w-screen">
                 <div className="flex justify-center py-3">
-                        <input type="text" name="artist_name" onChange={setArtistName} id="artist_name" className="rounded-l-full p-1 pl-4 text-black text-xl tracking-wide outline-none min-w-0" />
-                        <button type="button" name="submit_artist_name" onClick={setArtistSubmit} id="submit_artist_name" className="bg-lime-500 text-black rounded-tr rounded-br p-1 text-xl font-bold hover:bg-lime-600 transition ease-in-out duration-300 w-10">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-                            </svg>
-                        </button>
+                        <form className="flex justify-center py-3" onSubmit={setArtistSubmit}>
+                            <input type="text" name="artist_name" onChange={setArtistName} id="artist_name" className="rounded-l-full p-1 pl-4 text-black text-xl tracking-wide outline-none min-w-0" />
+                            <button type="submit" name="submit_artist_name" /*onClick={setArtistSubmit}*/ id="submit_artist_name" className="bg-lime-500 text-black rounded-tr rounded-br p-1 text-xl font-bold hover:bg-lime-600 transition ease-in-out duration-300 w-10">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                                </svg>
+                            </button>
+                        </form>
                 </div>
             </div>
         </>

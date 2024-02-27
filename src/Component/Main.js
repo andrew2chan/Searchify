@@ -1,15 +1,17 @@
 import * as d3 from "d3";
 import { useSelector } from "react-redux";
 import GraphImages from "./GraphImages";
-import {useState, useEffect, useRef} from 'react';
-import { fetchDevicesAvailable, fetchPlayTrack, fetchCurrentlyPlayingTrack } from "./helperFunctions";
+import {useState, useEffect, useRef, useCallback} from 'react';
+import { fetchDevicesAvailable, fetchPlayTrack, fetchCurrentlyPlayingTrack, fetchPauseTrack } from "./helperFunctions";
 
 const Main = (props) => {
     const [linksList, updateLinksList] = useState();
     const [selectedNode, updateSelectedNode] = useState();
     const [currentTrack, updateCurrentTrack] = useState("");
+    const [deviceID, updateDeviceID] = useState("");
     const accessToken = useSelector((state) => state.spotifyUserSlice.accessToken);
     const svgElement = useRef();
+    const musicControls = useRef();
     const { relatedArtistInfo: arrRelatedArtists } = props;
     const circleRadius = 20;
 
@@ -26,6 +28,31 @@ const Main = (props) => {
         let uriClicked = d3.select(e.target)
             .attr("data_uri"); //gets the uri that is saved in the data_uri attr
 
+        let body = JSON.stringify({
+            "uris": [uriClicked]
+        });
+
+        fetchPlayTrack(body, accessToken, deviceID);
+    }
+
+    const handlePlayPause = useCallback(() => {
+        if(musicControls.current) {
+            if(currentTrack === "") {
+                fetchPlayTrack(JSON.stringify({}), accessToken, deviceID)
+                .then(() => {
+                    musicControls.current.innerHTML = "play_circle";
+                }); //resume song
+            }
+            else {
+                fetchPauseTrack(accessToken, deviceID)
+                .then(() => {
+                    musicControls.current.innerHTML = "pause_circle";
+                }); //pauses the song
+            }
+        }
+    },[currentTrack, accessToken, deviceID, musicControls])
+
+    useEffect(() => {
         fetchDevicesAvailable(accessToken)
         .then((response) => {
             if(response.devices.length > 0) { //a devices is found
@@ -39,28 +66,39 @@ const Main = (props) => {
         .then((response) => {
             let { id } = response;
 
-            fetchPlayTrack(uriClicked, accessToken, id);
+            updateDeviceID(id);
         })
         .catch((err) => {
             console.log(err);
         })
-    }
+    },[updateDeviceID, accessToken]);
 
     useEffect(() => { //pulls currently playing song every 2 seconds or when a song is changed
         const getCurrentlyPlayingSong = () => {
             fetchCurrentlyPlayingTrack(accessToken)
             .then((response) => {
-                //console.log(response);
                 let trackName = response && response.item ? response.item.name : "";
-                let artistName = response &&response.item && response.item.artists ? response.item.artists[0].name : "";
-                updateCurrentTrack(trackName + " - " + artistName);
+                let artistName = response && response.item && response.item.artists ? response.item.artists[0].name : "";
+
+                response.is_playing ? updateCurrentTrack(trackName + " - " + artistName) : updateCurrentTrack(""); //updates the current track playing or sets it to no song playing
+
+                if(response.is_playing) { //takes care of the player controller if it is already playing some music
+                    if(musicControls.current) musicControls.current.innerHTML = "pause_circle";
+                }
+                else {
+                    if(musicControls.current) musicControls.current.innerHTML = "play_circle";
+                }
             })
         }
-        //getCurrentlyPlayingSong(accessToken);
-        setInterval(() => {
+
+        let intervalPlayingSong = setInterval(() => {
             getCurrentlyPlayingSong(accessToken);
-        }, 2000)
-    },[accessToken])
+        }, 1000);
+
+        return (() => { //unmount the interval so we don't get dupe calls
+            clearInterval(intervalPlayingSong);
+        })
+    },[accessToken, handlePlayPause]);
 
     useEffect(() => {
         if(arrRelatedArtists) {
@@ -226,7 +264,7 @@ const Main = (props) => {
                                     </aside>
                                 </div>
                                 <div className="py-4 px-1 border-t border-lime-600 flex align-middle">
-                                    <span className="material-symbols-outlined">pause_circle</span>
+                                    <span className="material-symbols-outlined cursor-pointer" ref={musicControls} onClick={handlePlayPause}>pause_circle</span>
                                     <span className="truncate flex items-center w-full">
                                         <span className="animate-marquee w-full">{currentTrack === "" ? "No song playing" : currentTrack}</span>
                                     </span>
