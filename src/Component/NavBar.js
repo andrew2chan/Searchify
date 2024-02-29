@@ -100,8 +100,6 @@ const NavBar = (props) => {
                 relatedArtistTree[i].topTracks = await getTopTracks(relatedArtistTree[i]);
             }
 
-            console.log(relatedArtistTree);
-
             props.updateRelatedArtistsInfo(relatedArtistTree); //pass this back up to the parent component
 
         })
