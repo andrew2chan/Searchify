@@ -227,7 +227,7 @@ const Main = (props) => {
                             <defs id="circle-images">
                                 {
                                     arrRelatedArtists.map((e, i) => {
-                                        return <GraphImages element={e} circleRadius={circleRadius} key={i} />
+                                        return <GraphImages element={e} circleRadius={circleRadius} url={e.data.images[0].url} key={i} />
                                     })
                                 }
                             </defs>
@@ -243,7 +243,9 @@ const Main = (props) => {
                                         {selectedNode && selectedNode.data ? selectedNode.data.name : "Title"}
                                     </header>
                                     <figure className="w-full ">
-                                        <img src={selectedNode && selectedNode.data ? selectedNode.data.images[0].url : "data:image/svg+xml;charset=utf8,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%3E%3C/svg%3E"} className="w-full border border-lime-600" alt="logo of singer or band" />
+                                        <a href={selectedNode && selectedNode.data ? selectedNode.data.external_urls.spotify : ""} target="_blank" rel="noreferrer">
+                                            <img src={selectedNode && selectedNode.data ? selectedNode.data.images[0].url : "data:image/svg+xml;charset=utf8,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%3E%3C/svg%3E"} className="w-full border border-lime-600" alt="logo of singer or band" />
+                                        </a>
                                         <figcaption className="text-md italic">
                                             {selectedNode && selectedNode.data ? selectedNode.data.genres.map((item) => capitalizeFirstLetter(item)).join(", ") : "" }
                                         </figcaption>
