@@ -23,7 +23,7 @@ const AuthorizationPage = () => {
             client_id: client_id,
             grant_type: 'authorization_code',
             code,
-            redirect_uri: 'http://localhost:3000/authorize', //for verification, doesn't redirect but must match what we used before
+            redirect_uri: window.location.origin + '/authorize', //for verification, doesn't redirect but must match what we used before
             code_verifier: codeVerifier,
           }),
         }

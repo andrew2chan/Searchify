@@ -31,7 +31,7 @@ const LandingPage = () => {
         const codeChallenge = base64encode(hashed);
 
         const clientId = client_id;
-        const redirectUri = 'http://localhost:3000/authorize'; //where we direct back to after authorization
+        const redirectUri = window.location.origin + '/authorize'; //where we direct back to after authorization
 
         const scope = 'user-read-playback-state user-modify-playback-state user-read-currently-playing'; //sets the scope of all the things we are authorized to use
         const authUrl = new URL("https://accounts.spotify.com/authorize");
