@@ -1,8 +1,8 @@
 import * as d3 from "d3";
 import { useSelector } from "react-redux";
 import GraphImages from "./GraphImages";
-import {useState, useEffect, useRef, useCallback} from 'react';
-import { fetchDevicesAvailable, fetchPlayTrack, fetchCurrentlyPlayingTrack, fetchPauseTrack } from "./helperFunctions";
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { fetchMaster } from "../Helper Files/fetchHelpers";
 
 const Main = (props) => {
     const [linksList, updateLinksList] = useState();
@@ -32,28 +32,41 @@ const Main = (props) => {
             "uris": [uriClicked]
         });
 
-        fetchPlayTrack(body, accessToken, deviceID);
+
+        fetchMaster('PUT', `https://api.spotify.com/v1/me/player/play?device_id=${deviceID}`, body) //change song
+        .catch((err) => {
+            console.log(err);
+            throw new Error(err);
+        })
     }
 
     const handlePlayPause = useCallback(() => {
         if(musicControls.current) {
             if(currentTrack === "") {
-                fetchPlayTrack(JSON.stringify({}), accessToken, deviceID)
+                fetchMaster('PUT', `https://api.spotify.com/v1/me/player/play?device_id=${deviceID}`) //resume song
                 .then(() => {
                     musicControls.current.innerHTML = "play_circle";
+                })
+                .catch((err) => {
+                    console.log(err);
+                    throw new Error(err);
                 }); //resume song
             }
             else {
-                fetchPauseTrack(accessToken, deviceID)
+                fetchMaster('PUT', `https://api.spotify.com/v1/me/player/pause?device_id=${deviceID}`) //pause song
                 .then(() => {
                     musicControls.current.innerHTML = "pause_circle";
+                })
+                .catch((err) => {
+                    console.log(err);
+                    throw new Error(err);
                 }); //pauses the song
             }
         }
-    },[currentTrack, accessToken, deviceID, musicControls])
+    },[currentTrack, deviceID, musicControls])
 
     useEffect(() => {
-        fetchDevicesAvailable(accessToken)
+        fetchMaster('GET', 'https://api.spotify.com/v1/me/player/devices') //get currently available devices
         .then((response) => {
             if(response.devices.length > 0) { //a devices is found
                 let { id } = response.devices[0];
@@ -70,13 +83,15 @@ const Main = (props) => {
         })
         .catch((err) => {
             console.log(err);
-        })
+            throw new Error(err);
+        });
     },[updateDeviceID, accessToken]);
 
     useEffect(() => { //pulls currently playing song every 2 seconds or when a song is changed
         const getCurrentlyPlayingSong = () => {
-            fetchCurrentlyPlayingTrack(accessToken)
+            fetchMaster('GET','https://api.spotify.com/v1/me/player/currently-playing') //get the currently playing song
             .then((response) => {
+                if(!response) return;
                 let trackName = response && response.item ? response.item.name : "";
                 let artistName = response && response.item && response.item.artists ? response.item.artists[0].name : "";
 
@@ -89,6 +104,10 @@ const Main = (props) => {
                     if(musicControls.current) musicControls.current.innerHTML = "play_circle";
                 }
             })
+            .catch((err) => {
+                console.log(err);
+                throw new Error(err);
+            });
         }
 
         let intervalPlayingSong = setInterval(() => {

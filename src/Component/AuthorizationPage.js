@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import ls from 'localstorage-slim';
 import { client_id } from '../env/env.js';
-import { updateAccessToken, updateRefreshToken } from "../Slices/spotifyUserSlice";
+import { updateAccessToken, updateRefreshToken, updateExpiresAt } from "../Slices/spotifyUserSlice";
 
 const AuthorizationPage = () => {
     const dispatch = useDispatch();
@@ -50,8 +50,10 @@ const AuthorizationPage = () => {
             //console.log(response);
             ls.set('access_token', response.access_token);
             ls.set('refresh_token', response.refresh_token);
+            ls.set('expires_at', new Date().getTime() + response.expires_in * 1000);
             dispatch(updateAccessToken(ls.get("access_token")));
             dispatch(updateRefreshToken(ls.get("refresh_token")));
+            dispatch(updateExpiresAt(ls.get('expires_at')));
             navigate('/main');
         })
         .catch((err) => {

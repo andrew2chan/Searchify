@@ -1,16 +1,35 @@
-import { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { updateSearchedInfo } from '../Slices/spotifySearchSlice';
-import { fetchArtistByName, fetchRelatedArtistById, fetchTopTracksById } from './helperFunctions';
+import { fetchMaster } from '../Helper Files/fetchHelpers';
 import { RelatedArtistsNode } from '../Models/RelatedArtists';
 import questionMark from '../Assets/QuestionMark.png';
+import { useNavigate } from 'react-router-dom';
+import ls from 'localstorage-slim';
+import { updateAccessToken, updateRefreshToken, updateExpiresAt } from "../Slices/spotifyUserSlice";
+import { checkExistingTokens } from '../Helper Files/authorizationHelpers';
 
 const NavBar = (props) => {
+    const navigate = useNavigate();
     const [artistName, updateArtistName] = useState("");
-    const accessToken = useSelector((state) => state.spotifyUserSlice.accessToken);
     const dispatch = useDispatch();
     const MAX_ARTISTS_ON_SCREEN = 50; // sets the max number of artists that can be on screen at one time + MAX_RELATED_ARTISTS + 1 (1 for main / 5 for initial 5 / 50 extra)
     const MAX_RELATED_ARTISTS = 2; // sets the max number of related artists that we will be showing per artist
+
+    useEffect(() => { //handle redirect back to main page if we don't have an access token, deals with refreshes on the page
+        if(checkExistingTokens()) {
+            let lsAccessToken = ls.get("access_token");
+            let lsRefreshToken = ls.get("refresh_token");
+            let lsExpiresAt = ls.get('expires_at');
+
+            dispatch(updateAccessToken(lsAccessToken));
+            dispatch(updateRefreshToken(lsRefreshToken));
+            dispatch(updateExpiresAt(lsExpiresAt));
+        }
+        else {
+            navigate('/');
+        }
+    }, [dispatch, navigate])
 
     // get related artists
     const getRelatedArtists = async (node) => {
@@ -31,7 +50,7 @@ const NavBar = (props) => {
                 c++;
                 if(c > MAX_ARTISTS_ON_SCREEN) return nodes; // we have hit our cap so we return the nodes array
 
-                await fetchRelatedArtistById(currNode.id, accessToken)
+                await fetchMaster('GET', `https://api.spotify.com/v1/artists/${currNode.id}/related-artists`)
                 .then((response) => {
                     let tmpC = 0; // Makes sure that we start below the max related artists
                     response.artists.map((item, index) => {
@@ -51,6 +70,7 @@ const NavBar = (props) => {
                 })
                 .catch((err) => {
                     console.log(err);
+                    throw new Error(err);
                 });
             }
             level++;
@@ -60,8 +80,9 @@ const NavBar = (props) => {
     }
 
     const getTopTracks = (currNode) => {
-        fetchTopTracksById(currNode.id, accessToken)
+        fetchMaster('GET', `https://api.spotify.com/v1/artists/${currNode.id}/top-tracks?market=CA`)
         .then((response) => {
+            //console.log(response);
             let topTracks = response.tracks.map((item) => 
             {
                 return  {"song_name": item.name, "uri": item.uri }
@@ -71,6 +92,7 @@ const NavBar = (props) => {
         })
         .catch((err) => {
             console.log(err);
+            throw new Error(err);
         })
     }
 
@@ -83,7 +105,7 @@ const NavBar = (props) => {
     const setArtistSubmit = async (e) => {
         e.preventDefault(); //stop from sending to a server
 
-        fetchArtistByName(artistName, accessToken)
+        fetchMaster('GET', `https://api.spotify.com/v1/search?q=${artistName}&type=artist&limit=1&offset=0`)
         .then(async (response) => {
             //console.log(response);
             if(!response.hasOwnProperty("error") ) { // only update the store if we don't run into an error while getting the artist, usually due to token being expired
@@ -105,6 +127,7 @@ const NavBar = (props) => {
         })
         .catch((err) => {
             console.log(err);
+            throw new Error(err);
         });
     }
 
