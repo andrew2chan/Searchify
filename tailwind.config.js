@@ -24,6 +24,10 @@ module.exports = {
       },
       animation: {
         marquee: 'marquee 20s linear infinite'
+      },
+      screens: {
+        'md-min': {'min': '640px'},
+        'sm-max': {'max': '639px'}
       }
     },
   },

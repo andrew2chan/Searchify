@@ -54,7 +54,7 @@ const LandingPage = () => {
     return (
         <>
             <div className="w-screen h-screen flex items-center justify-center">
-                <div className="border border-lime-600 px-6 py-3 bg-green-400 text-black rounded-lg hover:bg-green-500 transition duration-500 ease-linear text-2xl tracking-wider font-rounded cursor-pointer" onClick={handleClick}>Login</div>
+                <div className="border border-lime-600 px-6 py-3 bg-green-400 text-black rounded-lg hover:bg-green-500 transition duration-500 ease-linear sm-max:text-lg md-min:text-2xl tracking-wider font-rounded cursor-pointer" onClick={handleClick}>Login</div>
             </div>
         </>
     );

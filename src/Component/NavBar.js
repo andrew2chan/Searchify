@@ -7,6 +7,7 @@ import questionMark from '../Assets/QuestionMark.png';
 import { useNavigate } from 'react-router-dom';
 import ls from 'localstorage-slim';
 import { updateAccessToken, updateRefreshToken, updateExpiresAt } from "../Slices/spotifyUserSlice";
+import { updateFirstTimeLoaded } from '../Slices/spotifySearchSlice';
 import { checkExistingTokens } from '../Helper Files/authorizationHelpers';
 
 const NavBar = (props) => {
@@ -104,6 +105,10 @@ const NavBar = (props) => {
     // submits the artist name to the spotify api and returns info based on that
     const setArtistSubmit = async (e) => {
         e.preventDefault(); //stop from sending to a server
+        if(artistName.trim().length === 0) return;
+
+        props.updateRelatedArtistsInfo(""); //clear the tree in order to show loading screen each time we submit
+        dispatch(updateFirstTimeLoaded(false));
 
         fetchMaster('GET', `https://api.spotify.com/v1/search?q=${artistName}&type=artist&limit=1&offset=0`)
         .then(async (response) => {
@@ -135,9 +140,9 @@ const NavBar = (props) => {
         <>
             <div className="w-screen">
                 <div className="flex justify-center py-3">
-                        <form className="flex justify-center py-3" onSubmit={setArtistSubmit}>
-                            <input type="text" name="artist_name" onChange={setArtistName} id="artist_name" className="rounded-l-full p-1 pl-4 text-black text-xl tracking-wide outline-none min-w-0" />
-                            <button type="submit" name="submit_artist_name" id="submit_artist_name" className="bg-lime-500 text-black rounded-tr rounded-br p-1 text-xl font-bold hover:bg-lime-600 transition ease-in-out duration-300 w-10">
+                        <form className="flex justify-center py-3 sm-max:flex-col md-min:flex-row" onSubmit={setArtistSubmit}>
+                            <input type="text" name="artist_name" onChange={setArtistName} id="artist_name" className="md-min:rounded-l-full p-1 pl-4 text-black text-xl tracking-wide outline-none min-w-0 w-full" />
+                            <button type="submit" name="submit_artist_name" id="submit_artist_name" className="bg-lime-500 text-black flex justify-center items-center md-min:rounded-tr md-min:rounded-br p-1 text-xl font-bold hover:bg-lime-600 transition ease-in-out duration-300 md-min:w-10">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
                                 </svg>
