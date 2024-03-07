@@ -139,8 +139,8 @@ const NavBar = (props) => {
     return (
         <>
             <div className="w-screen">
-                <div className="flex justify-center py-3">
-                        <form className="flex justify-center py-3 sm-max:flex-col md-min:flex-row" onSubmit={setArtistSubmit}>
+                <div className="flex justify-center md-min:py-3">
+                        <form className="flex justify-center md-min:py-3 sm-max:flex-col md-min:flex-row" onSubmit={setArtistSubmit}>
                             <input type="text" name="artist_name" onChange={setArtistName} id="artist_name" className="md-min:rounded-l-full p-1 pl-4 text-black text-xl tracking-wide outline-none min-w-0 w-full" />
                             <button type="submit" name="submit_artist_name" id="submit_artist_name" className="bg-lime-500 text-black flex justify-center items-center md-min:rounded-tr md-min:rounded-br p-1 text-xl font-bold hover:bg-lime-600 transition ease-in-out duration-300 md-min:w-10">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">

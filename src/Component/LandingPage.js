@@ -1,8 +1,13 @@
 import ls from 'localstorage-slim';
+import { useEffect } from 'react';
 
 import { client_id } from '../env/env.js';
 
 const LandingPage = () => {
+    useEffect(() => {
+        ls.clear();
+    },[])
+
     // code from spotify, generates a random string
     const generateRandomString = (length) => {
         const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';

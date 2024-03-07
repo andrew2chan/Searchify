@@ -15,7 +15,7 @@ const Main = (props) => {
     const { relatedArtistInfo: arrRelatedArtists } = props;
     const circleRadius = 20;
     const firstTimeLoaded = useSelector(state => state.spotifySearchSlice.firstTimeLoaded);
-    const [infoBoxStatus, updateInfoBoxStates] = useState(true);
+    const [infoBoxStatus, updateInfoBoxStates] = useState(false);
 
     const capitalizeFirstLetter = (word) => {
         return word.charAt(0).toUpperCase() + word.slice(1);
@@ -69,14 +69,16 @@ const Main = (props) => {
 
     const openInfoBox = () => {
         d3.select("#information-box")
-                .style("width", "24rem")
+                .classed("max-w-0", false)
+                .classed("max-w-sm", true)
 
         updateInfoBoxStates(true)
     }
 
     const closeInfoBox = () => {
         d3.select("#information-box")
-                .style("width", "0");
+                .classed("max-w-sm", false)
+                .classed("max-w-0", true);
 
         updateInfoBoxStates(false)
     }
@@ -282,7 +284,7 @@ const Main = (props) => {
                         </svg>
 
                         <span className="material-symbols-outlined absolute sm-max:top-2 sm-max:right-2 md-min:right-8 md-min:top-4 z-20 cursor-pointer" onClick={handleCloseInfoBox}>{infoBoxStatus ? "close" : "keyboard_double_arrow_left"}</span>
-                        <div className="absolute z-10 top-0 right-0 sm-max:max-w-full md-min:max-w-96 h-full bg-black border border-lime-600 transition-all ease-linear duration-500 overflow-hidden" id="information-box"> { /* This is the box for the pop up box */ }
+                        <div className="absolute z-10 top-0 right-0 max-w-0 h-full bg-black border border-lime-600 transition-all duration-500 overflow-hidden" id="information-box"> { /* This is the box for the pop up box */ }
                             <div className="w-full h-full flex flex-col justify-between">
                                 <div className="w-full h-full py-8 px-4 flex flex-col overflow-y-scroll [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                                     <header className="font-bold text-5xl">
