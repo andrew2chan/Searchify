@@ -285,14 +285,14 @@ const Main = (props) => {
 
                         <span className="material-symbols-outlined absolute sm-max:top-2 sm-max:right-2 md-min:right-8 md-min:top-4 z-20 cursor-pointer" onClick={handleCloseInfoBox}>{infoBoxStatus ? "close" : "keyboard_double_arrow_left"}</span>
                         <div className="absolute z-10 top-0 right-0 max-w-0 h-full bg-black border border-lime-600 transition-all duration-500 overflow-hidden" id="information-box"> { /* This is the box for the pop up box */ }
-                            <div className="w-full h-full flex flex-col justify-between">
+                            <div className="w-full h-full flex flex-col justify-between overflow-y-scroll [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                                 <div className="w-full h-full py-8 px-4 flex flex-col overflow-y-scroll [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                                     <header className="font-bold text-5xl">
                                         {selectedNode && selectedNode.data ? selectedNode.data.name : "Title"}
                                     </header>
                                     <figure className="w-full ">
                                         <a href={selectedNode && selectedNode.data ? selectedNode.data.external_urls.spotify : ""} target="_blank" rel="noreferrer">
-                                            <img src={selectedNode && selectedNode.data ? selectedNode.data.images[0].url : "data:image/svg+xml;charset=utf8,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%3E%3C/svg%3E"} className="w-full border border-lime-600" alt="logo of singer or band" />
+                                            <img src={selectedNode && selectedNode.data ? selectedNode.data.images[0].url : "data:image/svg+xml;charset=utf8,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%3E%3C/svg%3E"} className="max-w-xs w-1/2 border border-lime-600" alt="logo of singer or band" />
                                         </a>
                                         <figcaption className="text-md italic">
                                             {selectedNode && selectedNode.data ? selectedNode.data.genres.map((item) => capitalizeFirstLetter(item)).join(", ") : "" }
@@ -315,7 +315,7 @@ const Main = (props) => {
                                 </div>
                                 <div className="py-4 px-1 border-t border-lime-600 flex align-middle sm-max:sticky">
                                     <span className="material-symbols-outlined cursor-pointer"><button onClick={handlePlayPause} ref={musicControls}>play_circle</button></span>
-                                    <span className="truncate flex items-center w-full">
+                                    <span className="truncate flex items-center w-full bg-black z-30">
                                         <span className="animate-marquee w-full">{currentTrack === "" ? "No song playing" : currentTrack}</span>
                                     </span>
                                 </div>
