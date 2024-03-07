@@ -69,16 +69,16 @@ const Main = (props) => {
 
     const openInfoBox = () => {
         d3.select("#information-box")
-                .classed("max-w-0", false)
-                .classed("max-w-sm", true)
+                .classed("w-0", false)
+                .classed("sm-max:w-full md-min:w-96", true)
 
         updateInfoBoxStates(true)
     }
 
     const closeInfoBox = () => {
         d3.select("#information-box")
-                .classed("max-w-sm", false)
-                .classed("max-w-0", true);
+                .classed("sm-max:w-full md-min:w-96", false)
+                .classed("w-0", true);
 
         updateInfoBoxStates(false)
     }
@@ -284,15 +284,15 @@ const Main = (props) => {
                         </svg>
 
                         <span className="material-symbols-outlined absolute sm-max:top-2 sm-max:right-2 md-min:right-8 md-min:top-4 z-20 cursor-pointer" onClick={handleCloseInfoBox}>{infoBoxStatus ? "close" : "keyboard_double_arrow_left"}</span>
-                        <div className="absolute z-10 top-0 right-0 max-w-0 h-full bg-black border border-lime-600 transition-all duration-500 overflow-hidden" id="information-box"> { /* This is the box for the pop up box */ }
+                        <div className="absolute z-10 top-0 right-0 w-0 h-full bg-black border border-lime-600 transition-all duration-500 overflow-hidden" id="information-box"> { /* This is the box for the pop up box */ }
                             <div className="w-full h-full flex flex-col justify-between overflow-y-scroll [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                                 <div className="w-full h-full py-8 px-4 flex flex-col overflow-y-scroll [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                                     <header className="font-bold text-5xl">
                                         {selectedNode && selectedNode.data ? selectedNode.data.name : "Title"}
                                     </header>
-                                    <figure className="w-full ">
-                                        <a href={selectedNode && selectedNode.data ? selectedNode.data.external_urls.spotify : ""} target="_blank" rel="noreferrer">
-                                            <img src={selectedNode && selectedNode.data ? selectedNode.data.images[0].url : "data:image/svg+xml;charset=utf8,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%3E%3C/svg%3E"} className="max-w-xs w-1/2 border border-lime-600" alt="logo of singer or band" />
+                                    <figure className="w-full flex flex-col">
+                                        <a href={selectedNode && selectedNode.data ? selectedNode.data.external_urls.spotify : ""} target="_blank" rel="noreferrer" className="self-start">
+                                            <img src={selectedNode && selectedNode.data ? selectedNode.data.images[0].url : "data:image/svg+xml;charset=utf8,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%3E%3C/svg%3E"} className="sm-max:max-h-48 border border-lime-600" alt="logo of singer or band" />
                                         </a>
                                         <figcaption className="text-md italic">
                                             {selectedNode && selectedNode.data ? selectedNode.data.genres.map((item) => capitalizeFirstLetter(item)).join(", ") : "" }
