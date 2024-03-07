@@ -110,7 +110,7 @@ const Main = (props) => {
         })
         .catch((err) => {
             console.log(err);
-            throw new Error(err);
+            return;
         });
     },[updateDeviceID, accessToken]);
 
@@ -306,15 +306,15 @@ const Main = (props) => {
                                             {
                                                 selectedNode && selectedNode.topTracks.map((item, index) => {
                                                     return (
-                                                        <li key={index} data_uri={item.uri} onClick={handleClickOnSongName} className="cursor-pointer hover:text-lime-600 transition duration-200">{item.song_name}</li>
+                                                        <li key={index} className="cursor-pointer hover:text-lime-600 transition duration-200"><button onClick={handleClickOnSongName} data_uri={item.uri} className="text-left">{item.song_name}</button></li>
                                                     )
                                                 })
                                             }
                                         </ul>
                                     </aside>
                                 </div>
-                                <div className="py-4 px-1 border-t border-lime-600 flex align-middle">
-                                    <span className="material-symbols-outlined cursor-pointer" ref={musicControls} onClick={handlePlayPause}>play_circle</span>
+                                <div className="py-4 px-1 border-t border-lime-600 flex align-middle sm-max:sticky">
+                                    <span className="material-symbols-outlined cursor-pointer"><button onClick={handlePlayPause} ref={musicControls}>play_circle</button></span>
                                     <span className="truncate flex items-center w-full">
                                         <span className="animate-marquee w-full">{currentTrack === "" ? "No song playing" : currentTrack}</span>
                                     </span>
