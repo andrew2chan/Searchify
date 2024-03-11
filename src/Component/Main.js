@@ -325,7 +325,7 @@ const Main = (props) => {
                 ) :
                 (
                     firstTimeLoaded ? (
-                        <div className="w-full h-full flex justify-center items-center font-rounded sm-max:text-lg md-min:text-4xl">Begin by using the search bar at the top to find an artist</div>
+                        <div className="w-full h-full flex justify-center items-center font-rounded sm-max:text-lg md-min:text-4xl">Begin by using the search bar at the top to find an artist. Note: If a song isn't playing, you may need to open Spotify first and play a random song so that Spotify API can detect a device.</div>
                     )
                     : (
                         <div className="w-full h-full flex justify-center items-center font-rounded sm-max:text-lg md-min:text-2xl flex-col">
