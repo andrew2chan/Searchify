@@ -1,3 +1,8 @@
+### Summary
+This is an app that lets connects to your spotify API account and lets you search for an artist and returns a tree of related artists. You can click the icons and it will show their top 3 songs and you can click on those songs to play them.
+*Spotify Premium required
+**Spotify API has a bit of an issue if spotify isn't already playing so please start playing a song off the app itself before clicking on a top 3 song in the web app
+
 ## Available Scripts
 
 In the project directory, you can run:
